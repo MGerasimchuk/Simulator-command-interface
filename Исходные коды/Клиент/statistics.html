@@ -1,0 +1,879 @@
+﻿<!doctype html>
+<html>
+    <head>
+        <title>Create</title>
+        <meta charset='utf-8' />
+    </head>
+    <style>
+
+    .left {
+        width: 445px;
+        float: left;
+
+    }
+
+
+    .right {
+        width: 690px;
+        float: left;
+
+    }
+    
+    .cell {
+        width: 350px; 
+        height: 65px;       
+        text-align:  left;
+        float: left;
+       
+    }
+
+    .cell1 {
+        width: 570px; 
+        height: 65px;       
+        text-align:  left;
+        float: left;
+       
+    }
+    .cell2 {
+        width: 360px; 
+        height: 65px;
+        float: left;     
+        text-align:  left;
+          padding-right: 70px;
+   
+    }
+
+    .cell3 {
+        width: 170px; 
+        padding: 5px;
+        height: 55px;       
+        float: left;
+   
+
+      
+   
+    }
+
+    .pp {
+        width: 1200px;
+        float: left;
+        height: 60px;
+    }
+    select {
+        width: 160px;
+    
+    }
+   
+     .cell4 {
+        width: 260px; 
+        height: 55px;       
+        float: left;
+        text-align: left;
+        padding-right: 20px;
+    
+    }
+    .cell5 {
+        width: 186px; 
+        height: 60px;       
+        float: left;
+        text-align: left;
+    
+    }
+    
+    .results {
+        width: 1200px;
+        float: left;
+    }
+
+   
+    input[type="checkbox"]:hover, 
+        input[type="checkbox"]:focus{ 
+        border-color: #C9C9C9; 
+        -webkit-box-shadow: rgba(0, 0, 0,  0.15) 0px 0px 8px;
+    }
+   
+
+    input[type="checkbox"] {
+        height: 20px; 
+        width: 20px;
+         border: solid 3px #E5E5E5;
+        outline: 0;
+        font: normal 13px/100% Verdana,  Tahoma, sans-serif;       
+        background: -webkit-gradient(linear,  left top, left 25, from(#FFFFFF), color-stop(4%, #EEEEEE), to(#FFFFFF));
+        background: -moz-linear-gradient(top,  #FFFFFF, #EEEEEE 1px, #FFFFFF 25px);
+        box-shadow: rgba(0,0,0, 0.1) 0px 0px  8px;
+        -moz-box-shadow: rgba(0,0,0, 0.1)  0px 0px 8px;
+        -webkit-box-shadow: rgba(0,0,0, 0.1)  0px 0px 8px;
+        resize: none
+    }
+
+    input[type="button"]  {
+        background: linear-gradient(to bottom, white 10%, #f6f6f6 50%, #f1f1f1 100%);
+        font-size: 14px; 
+        padding: 7px 7px; 
+        border: 1px solid #333; 
+        border-radius: 5px; 
+        text-align: center;
+
+    }
+   
+    </style>
+
+    <script>
+     getFilter();
+    //window.onload = getFilter;
+
+    function getFilter()
+    {
+        var XHR = window.XDomainRequest || window.XMLHttpRequest
+        var xhr = new XHR(); // создание кросс-браузерного запроса
+
+        xhr.open("GET", '/simmg/analysis.php?act=getParForFilter', true); //создание запроса
+
+        xhr.onload = function() {
+        var answer = eval( '(' + xhr.responseText + ')' ); //обработка ответа при успешном запросе
+        console.log(answer);
+        createOption ("discyplines", answer['subject'], 'subject'); //функция создания списка дисциплин
+        createOption ("groups", answer['group'], 'tgroup');
+        createOption ("systems", answer['system'], 'system');
+        createOption ("session_courses", answer['session_course'], 'session_course');
+        createOption ("labworks", answer['labwork'], 'labwork');
+        }
+
+        xhr.onerror = function() { //обработка ошибок
+            alert("Error")
+        }
+
+        xhr.send()
+    }
+ 
+   
+    function createOption (select, list, type)
+    {
+        console.log(select);
+        var paste = document.getElementById(select);
+        for (var i = 0; i < list.length; i++)
+        {
+
+            option = document.createElement("option");
+            //option.id = 'id_'+type+'_'+i;
+            option.appendChild(document.createTextNode(list[i][type+'_name']));
+            console.log(option, paste);
+            paste.appendChild(option);
+
+            console.log(option);
+        }
+
+    }
+
+    function setDate()
+{
+    var date = new Date();
+
+    var day = date.getDate();
+    var month = date.getMonth() + 1;
+    var year = date.getFullYear();
+
+    if (month < 10) month = "0" + month;
+    if (day < 10) day = "0" + day;
+
+    var today = year + "-" + month + "-" + day;
+    var week2 = new Date();
+    var month1 = week2.getMonth() + 1;
+    var day2 = week2.getDate()-7;
+
+    if (day2 <= 0)
+    {   
+
+        month1 --;
+        console.log(month1);
+        if (month1 === 1 || month1 === 3 || month1 === 5 || month1 === 7 || month1 === 8 || month1 === 10 || month1 === 12)
+        {
+            day2+= 31;
+            console.log(day2);
+        }
+        console.log(month1);
+
+        if (month1 === 4 || month1 === 6 || month1 === 9 || month1 === 11)
+        {
+            day2+=30;
+            console.log(day2);
+        }
+        console.log(month1);
+        if (month1 === 2)
+        {
+            day2+=28;
+            console.log(day2);
+        }
+    }
+
+    if (month1 < 10) month1 = "0" + month1;
+    if (day2 < 10) day2 = "0" + day2;
+
+    var data2 =   week2.getFullYear() + '-'+ month1 + '-' + day2;
+
+    document.getElementById('Date').value = today;
+    document.getElementById('Date1').value = data2;
+}
+
+    </script>
+
+<link rel="stylesheet" href="/sites/default/files/bootstrap/docs/assets/bootstrap/css/bootstrap.min.css">
+
+<link rel="stylesheet" href="/sites/default/files/bootstrap/docs/assets/bootstrap/css/bootstrap-select.css">
+    <link rel="stylesheet" href="/sites/default/files/bootstrap/src/bootstrap-table.css">
+
+
+    <script src="/sites/default/files/bootstrap/docs/assets/js/jquery.min.js"></script>
+    <script src="/sites/default/files/bootstrap/docs/assets/bootstrap/js/bootstrap.min.js"></script>
+
+    <script src="/sites/default/files/bootstrap/src/bootstrap-table.js"></script>
+<script src="/sites/default/files/bootstrap/docs/assets/bootstrap/css/bootstrap-select.js"></script>
+    <script src="/sites/default/files/bootstrap/docs/assets/js/common.js"></script>
+</head>
+<body>  
+    <form name = "s1">
+
+        <div class = "cell">Предмет
+            <select  id = "discyplines"  name = "pid_subject" class="selectpicker" multiple required>
+            </select>
+        </div>
+
+        <div class = "cell">Лабораторные
+            <select  id = "labworks"name = "pid_labs"  class="selectpicker" multiple  required>
+            </select>
+        </div>
+
+         <div class = "cell">Системы&nbsp;
+            <select  id = "systems" name = "pid_system" class="selectpicker" multiple  required> 
+            </select>
+        </div>
+
+        <div class = "cell">Группы&nbsp;&nbsp;&nbsp;
+            <select id = "groups" name = "pid_group" class="selectpicker" multiple  required> 
+            </select>
+        </div>
+       
+
+        <div class = "cell1">Курсы&nbsp;
+            <select  id = "session_courses" name = "pid_course" class="selectpicker" multiple  required> 
+            </select>
+        </div>
+    </form>
+    <form class="form-inline" name = "s2">
+        <div class = "pp">
+
+            <div class = "cell2">Дата начала<input type="date" name = "ses_bdate"  class="form-control" required id = 'Date1'></div>
+                <div class = "cell2">Дата Окончания<input type="date" name = "ses_edate" class="form-control" required id = 'Date'></div>
+        </div>
+    </form>
+    
+    <form name = "s3">
+
+        <div class = "pp">
+       
+
+            <div class = "cell4"> Фамилия
+                         <input type="text" class="form-control" name = "us" required>
+            </div>
+
+            <div class = "cell4"> Имя
+                         <input type="text" class="form-control" name = "uf" required>
+            </div>
+
+            <div class = "cell4"> Отчество
+                         <input type="text" class="form-control" name = "up" required>
+            </div>
+        
+           
+
+        </div>
+
+         <div class = "pp">
+
+            <div class = "cell3">
+                         <input type="checkbox" name = "ses_done" required>Работа сдана
+            </div>
+
+            <div class = "cell3">
+                         <input type = "checkbox" required name = "best_ses"/>Лучшие сессии
+            </div>
+
+            <div class = "cell3">
+                         <input type="checkbox" name = "ses_comp_stat" required>Сессия завершена
+            </div>
+
+
+            <div class = "cell3">
+                         <input type = "checkbox" required name = "ses_force_quit"/>Потеря связи
+            </div>
+
+            <div class = "cell3">
+                         <input type = "checkbox" required name = "ses_tl"/>Истекло время
+            </div>
+
+             <div class = "cell4">
+                     <input type = "button" value = "Поиск" id = "refresh"/>
+        </div>
+
+        </div>
+
+        
+    </form>
+    <div class = "results"></div>
+    <table id="table-javascript" data-weight="900"></table>
+    
+    <div class = "left">
+        <table id="session-table-list"></table>
+    </div>
+
+    <div class = "right">
+    <table id="session-table" data-card-view="true">
+       
+    </table>
+    </div>
+    <script>
+    setDate();
+    var params;
+    var dataget = [];
+    var datagg = [];
+    var flag = 0;
+    var flag1 = 0;
+    var os_list = "";
+    var group_list = "";
+    var lw_list = "";
+    var subj_list = "";
+    var course_list = "";
+    console.log('1');
+    $('#session-table').hide();
+    $('#session-table-list').hide();
+    $(function () {
+         $('#refresh').click(function () {
+            listsFormer();       
+            params =  
+            "&os_list=" + encodeURIComponent(os_list)
+            + "&group_list=" + encodeURIComponent(group_list)
+            + "&lw_list=" + encodeURIComponent(lw_list)
+            + "&subj_list=" + encodeURIComponent(subj_list)
+            + "&course_list=" + encodeURIComponent(course_list)
+            + "&us=" + encodeURIComponent(s3.us.value)
+            + "&uf=" + encodeURIComponent(s3.uf.value)
+            + "&up=" + encodeURIComponent(s3.up.value)
+            + "&ses_bdate=" + encodeURIComponent(s2.ses_bdate.value) 
+            + "&ses_edate=" + encodeURIComponent(s2.ses_edate.value)
+            + "&ses_comp_stat=" + encodeURIComponent(s3.ses_comp_stat.checked ? 1 : "")
+            + "&ses_tl=" + encodeURIComponent(s3.ses_tl.checked ? 1 : "")
+            + "&ses_force_quit=" + encodeURIComponent(s3.ses_force_quit.checked ? 1 : "")
+            + "&ses_done=" + encodeURIComponent(s3.ses_done.checked ? 1 : "")
+            + "&best_ses=" +  encodeURIComponent(s3.best_ses.checked  ? 1 : "");
+            var $result = $('#events-result');
+            $('#table-javascript').bootstrapTable({
+                method: 'get',
+                url: '/simmg/analysis.php?act=getSessionByPar'+params,
+                cache: false,
+                height: 500,
+                striped: true,
+                pagination: true,
+                pageSize: 50,
+                pageList: [10, 25, 50, 100, 200],
+                search: true,
+                showColumns: true,
+                showRefresh: true,
+                minimumCountColumns: 2,
+                clickToSelect: true,
+               columns: [
+                {
+                    field: 'id_session',
+                    title: 'ID',
+                    align: 'left',
+                    valign: 'top',
+                    sortable: true
+                }, {
+                    field: 'user_fio',
+                    title: 'ФИО',
+                    align: 'left',
+                    valign: 'top',
+                    sortable: true
+                }, {
+                    field: 'tgroup_name',
+                    title: 'Группа',
+                    align: 'left',
+                    valign: 'top',
+                    sortable: true,
+                   // formatter: nameFormatter
+                }, {
+                    field: 'subject_name',
+                    title: 'Предмет',
+                    align: 'left',
+                    valign: 'top',
+                    sortable: true,
+                   // formatter: priceFormatter,
+                   // sorter: priceSorter
+                }, 
+                {
+                    field: 'labwork_name',
+                    title: 'ЛР',
+                    align: 'left',
+                    valign: 'top',
+                    sortable: true,
+                   // formatter: priceFormatter,
+                   // sorter: priceSorter
+                }, 
+                {
+                    field: 'session_course_name',
+                    title: 'Курс',
+                    align: 'left',
+                    valign: 'top',
+                    sortable: true,
+                   // formatter: priceFormatter,
+                   // sorter: priceSorter
+                }, 
+                {
+                    field: 'session_start',
+                    title: 'Начало сессии',
+                    align: 'left',
+                    valign: 'top',
+                    sortable: true,
+                   // formatter: priceFormatter,
+                   // sorter: priceSorter
+                }, 
+                {
+                    field: 'session_completed',
+                    title: '<span class="glyphicon glyphicon-ok"></span>',
+                    align: 'left',
+                    valign: 'top',
+                    sortable: true,
+                    formatter: yesNoFormatter,
+                   // sorter: priceSorter
+                },
+                  {
+                    field: 'session_exec_time',
+                    title: 'Время вып.',
+                    align: 'left',
+                    valign: 'top',
+                    sortable: true,
+                   // formatter: priceFormatter,
+                   // sorter: priceSorter
+                }, 
+ {
+                    field: 'labwork_tlimit',
+                    title: 'Время ЛР',
+                    align: 'left',
+                    valign: 'top',
+                    sortable: true,
+                   // formatter: priceFormatter,
+                   // sorter: priceSorter
+                }, 
+                  {
+                    field: 'session_foul_sum',
+                    title: 'Штраф', 
+                    align: 'left',
+                    valign: 'top',
+                    sortable: true,
+                   // formatter: priceFormatter,
+                   // sorter: priceSorter
+                }, 
+                  {
+                    field: 'session_total_score',
+                    title: 'Балл сессии',
+                    align: 'left',
+                    valign: 'top',
+                    sortable: true,
+                   // formatter: priceFormatter,
+                   // sorter: priceSorter
+                }, 
+    {
+                    field:'labwork_total_score',
+                    title: 'Макс.Баллов',
+                    align: 'left',
+                    valign: 'top',
+                    sortable: true,
+                   // formatter: priceFormatter,
+                   // sorter: priceSorter
+                }, 
+                  {
+                    field: 'session_percent_mark',
+                    title: '%',
+                    align: 'left',
+                    valign: 'top',
+                    sortable: true,
+                   // formatter: priceFormatter,
+                   // sorter: priceSorter
+                }, 
+                  {
+                    field: 'session_done',
+                    title: 'Сдано',
+                    align: 'left',
+                    valign: 'top',
+                    sortable: true,
+                    formatter: yesNoFormatter,
+                   // sorter: priceSorter
+                },
+                   {
+                    field: 'session_pnumber',
+                    title: 'Пункт',
+                    align: 'left',
+                    valign: 'top',
+                    sortable: true,
+                   // formatter: priceFormatter,
+                   // sorter: priceSorter
+                }, 
+                   {
+                    field: 'session_time_limit_text',
+                    title: 'TL',
+                    align: 'left',
+                    valign: 'top',
+                    sortable: true,
+                    formatter: noYesFormatter,
+                   // sorter: priceSorter
+                }, 
+                   {
+                    field: 'session_force_quit',
+                    title: 'Потеря связи',
+                    align: 'left',
+                    valign: 'top',
+                    sortable: true,
+                    formatter: noYesFormatter,
+                   // sorter: priceSorter
+                }, 
+                   {
+                    field: 'labwork_key',
+                    title: 'Ключ ЛР',
+                    align: 'left',
+                    valign: 'top',
+                    sortable: true,
+                   // formatter: priceFormatter,
+                   // sorter: priceSorter
+                },  
+                   {
+                    field: 'system_name',
+                    title: 'ОС ЛР',
+                    align: 'left',
+                    valign: 'top',
+                    sortable: true,
+                   // formatter: priceFormatter,
+                   // sorter: priceSorter
+                }, 
+                     {
+                    field: 'session_acepted_rejected_send',
+                    title: 'Попытки',
+                    align: 'left',
+                    valign: 'top',
+                    sortable: true,
+                   // formatter: priceFormatter,
+                   // sorter: priceSorter
+                },
+                {
+                    field: 'session_last_sent',
+                    title: 'Посл.отправка',
+                    align: 'left',
+                    valign: 'top',
+                    sortable: true,
+                   // formatter: priceFormatter,
+                   // sorter: priceSorter
+                } ,
+                {
+                    field: 'session_completed_by_user',
+                    title: 'Зав. пользователем',
+                    align: 'left',
+                    valign: 'top',
+                    sortable: true,
+                   formatter: yesNoFormatter,
+                   // sorter: priceSorter
+                }  ]
+            }).on('click-row.bs.table', function (e, row, $element) {
+                //$result.text('Event: click-row.bs.table, data: ' + JSON.stringify(row));
+                $.get("/simmg/analysis.php?act=getStatisticBySession&pid_session="+row['id_session'], function(data){   
+                  dataget = jQuery.parseJSON(data);
+                  //$('#session-table').bootstrapTable($(this).data('load'), dataget);
+                   $('#session-table-list').show();
+                   
+                   if (flag != 0)
+                   {
+                      $table.bootstrapTable('load', dataget);
+                      console.log(dataget, 'update');
+                   }
+
+                   else
+                   {                  
+                    $table = $('#session-table-list').bootstrapTable({
+                    data: dataget,
+                    height: 550,
+                    striped: true,
+                    pagination: true,
+                    pageSize: 50,
+                    pageList: [10, 25, 50, 100, 200],
+                    showColumns: true,
+                    showRefresh: true,
+                    minimumCountColumns: 2,
+                    columns: [{
+                        field: 'problem_ind',
+                        title: 'N',
+                        align: 'left',
+                        valign: 'top',
+                        sortable: false
+                    },
+                    {
+                        field: 'problem_task',
+                        title: 'Задание пункта',
+                        align: 'left',
+                        valign: 'top',
+                        sortable: false
+                    }]
+                   }).on('click-row.bs.table', function (e, row, $element) {
+
+                    $('#session-table').show();
+                    
+                    datagg.pop();
+                    datagg.push(dataget[$element[0]['rowIndex']-1]);
+  
+
+                     if (flag1 != 0)
+                       {
+                          $table_two.bootstrapTable('load', datagg);
+                          console.log(datagg, 'update');
+                       }
+
+                       else
+                       { 
+
+                        $table_two = $('#session-table').bootstrapTable({
+                        data: datagg,
+                        striped: true,
+                        pagination: true,
+                        showColumns: true,
+                        showRefresh: true,
+                        minimumCountColumns: 2,
+                         columns: [{
+                            field: 'problem_command',
+                            title: 'Команда',
+                            align: 'left',
+                            valign: 'top',
+                            sortable: false
+                        },
+                        {
+                            field: 'problem_foul',
+                            title: 'Штрафные',
+                            align: 'left',
+                            valign: 'top',
+                            sortable: false
+                        },
+                        {
+                            field: 'problem_fres',
+                            title: 'Неверный ввод',
+                            align: 'left',
+                            valign: 'top',
+                            sortable: false
+                        },
+                        {
+                            field: 'problem_mscore',
+                            title: 'Баллы',
+                            align: 'left',
+                            valign: 'top',
+                            sortable: false
+                        },
+                        {
+                            field: 'problem_rwel',
+                            title: 'Результирующее пригл.',
+                            align: 'left',
+                            valign: 'top',
+                            sortable: false
+                        },
+                        {
+                            field: 'problem_tres',
+                            title: 'Верный результат',
+                            align: 'left',
+                            valign: 'top',
+                            sortable: false
+                        },
+                        {
+                            field: 'statistic_accepted',
+                            title: 'Принятие пункта',
+                            align: 'left',
+                            valign: 'top',
+                            sortable: false,
+                            formatter: yesNoFormatter,
+                        },
+                        {
+                            field: 'statistic_command',
+                            title: 'Введенная команда',
+                            align: 'left',
+                            valign: 'top',
+                            sortable: false
+                        },
+                        {
+                            field: 'statistic_sent_time',
+                            title: 'Время отправки команды',
+                            align: 'left',
+                            valign: 'top',
+                            sortable: false
+                        },
+                        {
+                            field: 'statistic_sent_result',
+                            title: 'Отправленный результат',
+                            align: 'left',
+                            valign: 'top',
+                            sortable: false
+                        },
+                        {
+                            field: 'statistic_exec_time',
+                            title: 'Время выполн. команды',
+                            align: 'left',
+                            valign: 'top',
+                            sortable: false
+                        },
+                        {
+                            field: 'statistic_welcome',
+                            title: 'Текущее приглашение',
+                            align: 'left',
+                            valign: 'top',
+                            sortable: false
+                        },
+                        {
+                            field: 'statistic_attempt_limit',
+                            title: 'Превышение попыток',
+                            align: 'left',
+                            valign: 'top',
+                            sortable: false,
+                            formatter: noYesFormatter,
+                        }]                        
+                       })
+                        flag1 = 1;
+                        console.log(datagg, 'create');
+                      }
+
+
+                     });
+
+                     flag = 1;
+                     console.log(dataget, 'create');
+                   }
+
+                });
+                
+                // $('#session-table').bootstrapTable('load', dataget);
+                
+                /*$('#session-table').bootstrapTable({
+                data: dataget,
+                height: 500,
+                striped: true,
+                pagination: true,
+                pageSize: 50,
+                pageList: [10, 25, 50, 100, 200],
+                search: true,
+                showColumns: true,
+                showRefresh: true,
+                minimumCountColumns: 2,
+                clickToSelect: true,
+                columns: [{
+                    field: 'state',
+                    checkbox: true
+                }, {
+                    field: 'problem_task',
+                    title: 'Пункт',
+                    align: 'right',
+                    valign: 'bottom',
+                    sortable: true
+                }]       
+            })*/
+
+            });
+               $('#refresh').click(function () {
+
+                listsFormer();
+                params =  
+                 "&os_list=" + encodeURIComponent(os_list)
+                + "&group_list=" + encodeURIComponent(group_list)
+                + "&lw_list=" + encodeURIComponent(lw_list)
+                + "&subj_list=" + encodeURIComponent(subj_list)
+                + "&course_list=" + encodeURIComponent(course_list)
+                + "&us=" + encodeURIComponent(s3.us.value)
+                + "&uf=" + encodeURIComponent(s3.uf.value)
+                + "&up=" + encodeURIComponent(s3.up.value)
+                + "&ses_bdate=" + encodeURIComponent(s2.ses_bdate.value) 
+                + "&ses_edate=" + encodeURIComponent(s2.ses_edate.value)
+                + "&ses_comp_stat=" + encodeURIComponent(s3.ses_comp_stat.checked ? 1 : "")
+                + "&ses_tl=" + encodeURIComponent(s3.ses_tl.checked ? 1 : "")
+                + "&ses_force_quit=" + encodeURIComponent(s3.ses_force_quit.checked ? 1 : "")
+                + "&ses_done=" + encodeURIComponent(s3.ses_done.checked ? 1 : "")
+                + "&best_ses=" +  encodeURIComponent(s3.best_ses.checked  ? 1 : "");
+                $('#table-javascript').bootstrapTable('refresh', {
+                    url: '/simmg/analysis.php?act=getSessionByPar'+params,
+                });
+            });
+
+             
+         });
+    });
+
+    function yesNoFormatter(value) {
+        var color = '';
+        if (value === '1')        
+        { color = '#32CD32'; value = 'Да'}
+        else { color = '#B22222'; value = 'Нет'}
+        return '<span  style="color: ' + color + '">' + value.substring(0) +
+                '</span>';
+    }
+
+    function noYesFormatter(value) {
+        var color = '';
+        if (value === '1')        
+        { color = '#B22222'; value = 'Да'}
+        else { color = '#32CD32'; value = 'Нет'}
+        return '<span  style="color: ' + color + '">' + value.substring(0) +
+                '</span>';
+    }
+
+    function tickFormatter(value) {
+        return '<div>' +
+                '<i class="glyphicon glyphicon-ok"></i>' +
+                value.substring(1) +
+                '</div>';
+    }
+
+    function listsFormer () {
+
+        os_list = "";
+        for (var i=0; i < s1.pid_system.options.length; i++) {
+            if (s1.pid_system.options[i].selected) {
+                os_list += s1.pid_system.options[i].value; 
+                os_list += "~" ;
+            }
+        }
+
+        group_list = "";
+        for (var i=0; i < s1.pid_group.options.length; i++) {
+            if (s1.pid_group.options[i].selected) {
+                group_list += s1.pid_group.options[i].value; 
+                group_list += "~" ;
+            }
+        }
+
+        lw_list = "";
+        for (var i=0; i < s1.pid_labs.options.length; i++) {
+            if (s1.pid_labs.options[i].selected) {
+                lw_list += s1.pid_labs.options[i].value; 
+                lw_list += "~" ;
+            }
+        }
+
+        subj_list = "";
+        for (var i=0; i < s1.pid_subject.options.length; i++) {
+            if (s1.pid_subject.options[i].selected) {
+                subj_list += s1.pid_subject.options[i].value; 
+                subj_list += "~" ;
+            }
+        }
+
+        course_list = "";
+        for (var i=0; i < s1.pid_course.options.length; i++) {
+            if (s1.pid_course.options[i].selected) {
+                course_list += s1.pid_course.options[i].value; 
+                course_list += "~" ;
+            }
+        }
+
+    }
+</script>
+</body>
+</html>

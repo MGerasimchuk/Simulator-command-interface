@@ -1,0 +1,994 @@
+﻿<!doctype html>
+<html>
+    <head>
+        <title>Create</title>
+        <meta charset='utf-8' />
+    </head>
+
+    <style type="text/css">
+.block_info {  	
+    	width: 1100px; 
+    	 border-bottom: solid 1px #E5E5E5;
+    } 
+    .left_column {
+    	width: 700px; 
+    	float: left;    
+    	padding: 5px; 
+        left: 10px;
+        
+        position: absolute;
+ 		
+    }
+    .left_column2 {
+        width: 700px; 
+    	float: left;    
+    	padding: 5px; 
+        left: 10px;
+        position: absolute;
+        top: 640px;
+    }
+    .right_column {
+    	width: 360px;    
+    	float: left;
+    	padding: 5px; 
+    	left: 710px;
+    	position: absolute;
+    	 border-bottom: solid 1px #E5E5E5;
+   	}
+    .cell {
+    	width: 280px; 
+    	height: 45px;    	
+    	float: left;
+    	text-align:  left;
+    	
+    }
+    .cell2 {	
+    	width: 200px; 
+    	height: 45px; 	
+    	float: left;	
+    	text-align:  center;
+    	     
+    }
+
+    .cell3 {	    
+    	width: 340px;
+    	height: 65px; 	
+     	float: left; 
+     	padding: 5px;
+     	border-bottom: solid 5px #E5E5E5;
+     	  
+    }
+    .cell4 {
+    	width: 320px;     	
+    	float: left;
+    	padding: 5px;   
+    }  
+
+    .cell5 {
+    	width: 300px; 
+    	height: 35px;    	
+    	float: left;
+    	text-align:  left; 
+    	
+    	
+    }
+    .cell6 {	
+    	width: 85px; 
+    	height: 35px; 	
+    	float: left;	
+    	text-align:  center;
+    	     
+    }
+
+    .cell7 {	    
+    	width: 230px; 
+    	height: 175px; 	
+     	float: right; 
+    
+     	padding: 5px;
+     
+    }
+
+      .cell8 {	    
+    	width: 220px;
+    	height: 185px; 	
+     	float: left;
+     	padding: 5px; 
+     	  
+    }
+    input,  textarea {
+    	
+	    border: solid 3px #E5E5E5;
+	    outline: 0;
+	    font: normal 13px/100% Verdana,  Tahoma, sans-serif;	   
+	    background: -webkit-gradient(linear,  left top, left 25, from(#FFFFFF), color-stop(4%, #EEEEEE), to(#FFFFFF));
+	    background: -moz-linear-gradient(top,  #FFFFFF, #EEEEEE 1px, #FFFFFF 25px);
+	    box-shadow: rgba(0,0,0, 0.1) 0px 0px  8px;
+	    -moz-box-shadow: rgba(0,0,0, 0.1)  0px 0px 8px;
+	    -webkit-box-shadow: rgba(0,0,0, 0.1)  0px 0px 8px;
+	    resize: none
+	}
+	textarea { 
+	    width: 97%;
+	    height: 30px;
+	    resize: none
+	}
+	input:hover,  textarea:hover,
+	    input:focus,  textarea:focus { 
+	    border-color: #C9C9C9; 
+	    -webkit-box-shadow: rgba(0, 0, 0,  0.15) 0px 0px 8px;
+	}
+	.form label { 
+	    margin-left: 10px; 
+	    color: #999999; 
+	}
+
+	input[type="checkbox"] {
+	    height: 20px; 
+	    width: 20px;
+    }
+	.textarea_true {
+		height: 280px;
+	}
+
+	.textarea_dop {
+		height: 140px;	
+	}
+	button {
+	    background: linear-gradient(to bottom, white 10%, #f6f6f6 50%, #f1f1f1 100%);
+	    font-size: 14px; 
+	    padding: 7px 7px; 
+	    border: 1px solid #333; 
+	    border-radius: 5px; 
+	    text-align: center;
+
+   	}
+   	.cell_button {
+
+   		width: 120px;    
+    	float: left;
+    	padding: 5px; 
+    	padding-top: 10px;
+
+
+   	}
+
+
+	.f-table {
+	    border:1px solid #d3d3d3;
+	    background:#fefefe;
+	    margin-top: 0;
+	    *border-collapse: collapse; 
+   		border-spacing: 0;
+
+	}
+	 
+	.f-table td {
+		font: bold;
+	    padding:10px 5px 10px; 
+	    text-align:left; 
+	    border-top:1px solid #e0e0e0; 
+	    text-shadow: 1px 1px 1px #fff;
+	    border-right:1px solid #e0e0e0;
+	    padding: 3px;
+	    border: solid 1px #E5E5E5;
+	    outline: 0;
+	    font: normal 13px/100% Verdana,  Tahoma, sans-serif;	   
+	    box-shadow: rgba(0,0,0, 0.1) 0px 0px  8px;
+	    -moz-box-shadow: rgba(0,0,0, 0.1)  0px 0px 8px;
+	    -webkit-box-shadow: rgba(0,0,0, 0.1)  0px 0px 8px;
+	}
+
+    </style>
+
+	<body>
+	
+	<form name = "l1">	
+		
+			<div class = "left_column">
+				Название лабораторной работы
+				<textarea  WRAP="physical" required name = "pname" value=""></textarea>
+		
+
+				<div class = "cell">
+					 Дата начала лабораторной работы
+				   
+				</div>
+
+				<div class = "cell2">
+					 <input type="date" name = "pbdate" required>
+				</div>
+
+				<div class = "cell2">
+					 Доступность <input type = "checkbox" required name = "pavailable"/>		
+				</div>
+
+				<div class = "cell">
+					 Дата окончания лабораторной работы 
+				   
+				</div>
+
+				<div class = "cell2">
+					 <input type="date" name = "pedate" required>
+				</div>
+
+				<div class = "cell2" >ОС 
+					<select id = "systems" name = "ptsystem" required> 
+					</select>
+				</div>
+					
+				    
+				<div class = "cell">
+				 	 Количество попыток выполнения 
+				   
+				</div>
+
+				<div class = "cell2">
+					  <input type="number" min="0" max="10" step="1" value="0" name = "pclimit" required>
+				</div>
+
+				<div class = "cell2" >
+					Предмет					
+				</div>
+
+				
+						
+				<div class = "cell">
+				   Ограничение на время выполнения, мин 
+				  
+				</div>
+
+				<div class = "cell2">
+					  <input type="number" min="0" max="60" step="5" value="0" name = "ptlimit" required>
+				</div>
+
+				<div class = "cell2" >
+					<select id = "discyplines" name = "pid_subject" required> 
+						</select>
+				</div>
+				
+				<div class = "cell">
+				   Порог для успешного прохождения, % 
+				  
+				</div>
+
+				<div class = "cell2">
+					  <input type="number" min="0" max="100" step="1" value="0" name = "prift" required>
+				</div>
+
+				<div class = "cell3">
+					Примечание
+					<textarea name = "pnote" required  >-</textarea>
+				</div>
+
+				<div class = "cell3">
+					Начальное приглашение
+					<textarea name = "pswel" required  ></textarea>
+				</div>
+					
+				
+			</div>
+		
+	</form>
+
+	<div class = "right_column">	
+
+				<p>Список лабораторных работ	
+				<table id="labs" class = "f-table" cellspacing=0 cellpadding=0>
+		   		</table>
+		   		<table cellspacing=0 cellpadding=0>
+		    	<tr>
+		    		<td> <input type="button" onclick="get_labs()"  value ="Список лабораторных">
+		    		</td>
+		    		<td> <input type="button" onclick="load_this_lab()"  value ="Загрузить выбранную">
+		    		</td>
+		    	</tr>
+		    	</table>
+
+				<p>Пункты лабораторной работы		    	
+				<table id="table_labs" class = "f-table"  cellspacing=0 cellpadding=0>
+		    	</table>
+
+		    	<table>
+		    	<tr>
+		    		<td>  <input type="button" onclick="moveRowUp()" title ="переместить пункт вверх" value ="Вверх">
+		    		</td>
+		    		<td> <input type="button" onclick="moveRowDown()" title ="переместить пункт вверх" value ="Вниз"> 
+		    		</td>
+		    		<td> <input type="button" onclick="deleteRow()" title ="удалить выделенный пункт" value ="Удалить">
+		    		</td>
+		    		<td> <input type="button" onclick="loadThis()" title ="загрузить выделенный пункт" value ="Загрузить">
+		    		</td>
+		    	</tr>
+		    	</table>				
+
+				<div class = "cell_button">
+					<button onClick="saveInfoTask();" form = "l2">Добавить пункт</button> 
+				</div>				
+				
+				<div class = "cell_button">
+					<button onClick="saveInfoLab(); request ();" >Сохранить ЛР</button> 
+				</div>
+
+			</div>
+	<form name = "l2">
+	
+			<div class = "left_column2">
+				Содержание пункта задания
+				<textarea WRAP="physical" required name = "ptask" ></textarea>		
+
+				<div class = "cell5">
+					Максимальное кол-во баллов за пункт 
+				   
+				</div>
+
+				<div class = "cell6">
+					  <input required type="number" min="0" max="100" step="1" value="0" name = "pmscore">
+				</div>		
+
+				<div class = "cell7">
+					 Примечание
+					 <textarea required class = "textarea_dop" name = "pnote2" >-</textarea>
+				</div>		
+
+				<div class = "cell5">
+					 Максимальное количество попыток 
+				   
+				</div>
+
+				<div class = "cell6">
+					<input required type="number" min="0" max="10" step="1" value="0" name = "pclimit2">
+				</div>			
+					
+				    
+				<div class = "cell5">
+				 	 Штрафные баллы за неверную попытку 			   
+				</div>
+
+				<div class = "cell6">
+					  <input required type="number" min="0" max="10" step="1" value="0" name = "pfoul">
+				</div>			
+				
+				<div class = "cell3">
+				 	Результируещее приглашение
+				    <textarea required name = "prwel"></textarea>
+				</div>
+
+
+				<div class = "cell8">
+					Команда
+				    <textarea class = "textarea_true" required  name="pcommand" ></textarea>
+				</div>			
+
+				<div class = "cell8" >
+					 Верный результат
+					 <textarea class = "textarea_true" required name = "ptres"></textarea>
+				</div>
+					
+				<div class = "cell8" >
+					Неверный результат 
+					    <textarea required class = "textarea_true"  name = "pfres"></textarea>
+				</div>				 
+			</div>
+	</form>
+
+
+	
+</body>
+
+
+<script type="text/javascript">
+	var host = 'https://193.218.136.175/simmg/create_and_edit_labwork.php?';
+
+	getSubject();
+	getSystem();
+  
+    var Array_Labs;
+    var Array_Problems;
+    var table_move = document.getElementById("table_labs");
+    var currentRowId = -1;
+    var currentRow;
+    var currentRowId_lab = -1;
+    var currentRow_lab;
+    var currentRowIdDelete = -1;
+    var task_buff = new Array (20);
+    var task_count = 10, tasks_count = 20;
+	var task_array = new Array (20);
+	var info_lab = new Array (12) 
+	var global_flag = 0;
+	for (var i = 0; i < tasks_count; i++)
+	{
+		task_array[i] = new Array(10);
+		for (var j = 0; j < task_count; j++)
+		{
+			task_array[i][j] = 0;
+
+		}
+	}
+	console.log(task_array);
+	var count_problem = 0;
+
+	function get_labs()
+	{	
+		if (global_flag)
+		{
+			var table_refresh = document.getElementById('labs');
+			console.log(table_refresh);
+			table_refresh.removeChild('tr');
+
+		}
+		var XHR = window.XDomainRequest || window.XMLHttpRequest
+        var xhr = new XHR();
+
+        xhr.open("GET", host + 'act=getLabwork', true);
+
+        xhr.onload = function() {
+            //alert (xhr.responseText);
+        Array_Labs = eval( '(' + xhr.responseText + ')' );      
+       // var i = "0";
+        console.log(Array_Labs);
+        create_table_labs (Array_Labs);
+        }
+
+        xhr.onerror = function() {
+            alert("Error")
+        }
+
+        xhr.send() 
+        global_flag = 1;
+        
+	}
+
+
+	function create_table_labs (Array1)
+	{	
+		for (var i = 0; i < Array1.length; i++)
+		{
+
+			console.log(Array1[i][i+1]);
+			create_row('labs', i, Array1[i]['labwork_name']+' '+Array1[i]['labwork_key'], 0);
+
+		}
+	}
+
+	function load_this_lab ()
+	{
+		if (currentRowId_lab === -1)
+		{
+			alert ('выберите лабораторную');
+			return;
+		}
+		
+		var XHR = window.XDomainRequest || window.XMLHttpRequest;
+        var xhr = new XHR();
+
+        var params = Array_Labs[currentRowId_lab-1]['id_labwork'];
+
+        xhr.open("GET", host + 'act=loadProblem&pidlw='+params, true);
+
+        xhr.onload = function() {
+            //alert (xhr.responseText);
+        Array_Problems = eval( '(' + xhr.responseText + ')' );     
+
+ 		console.log(Array_Problems);
+ 		create_one_lab (Array_Problems);
+
+        }
+
+        xhr.onerror = function() {
+            alert("Error")
+        }
+
+        xhr.send() 
+
+       
+	}
+
+	function create_one_lab (Array_Problems)
+	{		
+
+		console.log(Array_Labs);
+
+		if (count_problem)
+			return;
+		l1.pname.value = Array_Labs[currentRowId_lab-1]['labwork_name'];
+		l1.pbdate.value = Array_Labs[currentRowId_lab-1]['labwork_bdate'];
+		l1.pclimit.value = Array_Labs[currentRowId_lab-1]['labwork_climit'];
+		l1.pedate.value =Array_Labs[currentRowId_lab-1]['labwork_edate'];
+
+		for (var i = 0; i < l1.ptsystem.options.length; i++)
+		{	
+			console.log(i, l1.ptsystem.options[i].id);
+			if (l1.ptsystem.options[i].id === Array_Labs[currentRowId_lab-1]['id_system'])
+				l1.ptsystem.options[i].selected = true;
+		}
+
+		for (var i = 0; i < l1.pid_subject.options.length; i++)
+		{	
+			console.log(i, l1.pid_subject.options[i].id);
+			if (l1.pid_subject.options[i].id === Array_Labs[currentRowId_lab-1]['id_subject'])
+				l1.pid_subject.options[i].selected = true;
+		}
+
+		
+		l1.ptlimit.value = Array_Labs[currentRowId_lab-1]['labwork_tlimit'];
+		l1.pnote.value = Array_Labs[currentRowId_lab-1]['labwork_note'];
+		l1.pswel.value = Array_Labs[currentRowId_lab-1]['labwork_swel'];	
+		l1.prift.value = Array_Labs[currentRowId_lab-1]['labwork_rift']
+
+		
+
+		if (Array_Labs[currentRowId_lab-1]['labwork_available'] === '1')
+			l1.pavailable.checked = true;
+		else
+			l1.pavailable.checked = false;
+
+		saveInfoLab();
+
+		
+		
+		for (var i=0; i<Array_Problems.length; i++)
+		{
+			l2.ptask.value = Array_Problems[i]['problem_task'];
+			l2.pclimit2.value = Array_Problems[i]['problem_climit'];
+			l2.pfoul.value = Array_Problems[i]['problem_foul'];
+			l2.pnote2.value = Array_Problems[i]['problem_note'];
+			l2.pcommand.value = Array_Problems[i]['problem_command'];
+			l2.prwel.value = Array_Problems[i]['problem_rwel'];
+			l2.pfres.value = Array_Problems[i]['problem_fres'];
+			l2.ptres.value = Array_Problems[i]['problem_tres'];
+			l2.pmscore.value = Array_Problems[i]['problem_mscore'];
+			saveInfoTask();
+		}
+
+
+		/*for (var i = 0; i < Array_Labs.length; i++)
+		{
+			console.log(Array_Labs[i]);
+			create_row_table ('table_labs', i, Array_Labs[i][1], 0);
+		}*/
+	}
+
+	function loadThis()
+	{	
+		console.log(task_array, currentRowId, currentRowIdDelete);
+		l2.ptask.value = task_array[currentRowIdDelete][j] 
+		l2.pclimit2.value = task_array[currentRowIdDelete][j+1] 
+		l2.pfoul.value = task_array[currentRowIdDelete][j+2]
+		l2.pnote2.value = task_array[currentRowIdDelete][j+3] 
+		l2.pcommand.value = task_array[currentRowIdDelete][j+4]
+		l2.prwel.value = task_array[currentRowIdDelete][j+5] 
+		l2.pfres.value = 	task_array[currentRowIdDelete][j+6]  
+	  	l2.ptres.value = 	task_array[currentRowIdDelete][j+7]
+		 l2.pmscore.value = task_array[currentRowIdDelete][j+8]
+	}	
+//ptwel нах
+
+	function saveInfoLab ()
+	{
+		
+		info_lab[0] = l1.pname.value;
+		info_lab[1] = l1.pbdate.value;
+		info_lab[2] = l1.pedate.value; 
+		info_lab[3] = l1.pclimit.value;		
+		info_lab[4] = l1.ptlimit.value;
+		info_lab[5] = l1.pnote.value;
+		info_lab[6] = l1.pswel.value;
+		info_lab[7] = l1.ptsystem.options[l1.ptsystem.selectedIndex].value;
+		info_lab[8] = l1.pid_subject.options[l1.pid_subject.selectedIndex].id;
+		console.log(l1.ptsystem.options[l1.ptsystem.selectedIndex].value);
+		if (l1.pavailable.checked === true)
+			info_lab[9] = 1;
+		else 
+			info_lab[9] = 0;
+		console.log(l1.prift.value);
+		info_lab[10] = l1.prift.value;
+	}
+
+	var index_count = 0;
+	var i = 0, j = 0;
+
+	function saveInfoTask ()
+	{
+		
+		var flag = 0;
+		console.log(count_problem);
+		task_array[count_problem][j] = l2.ptask.value;
+		task_array[count_problem][j+1] = l2.pclimit2.value;
+		task_array[count_problem][j+2] = l2.pfoul.value;
+		task_array[count_problem][j+3] = l2.pnote2.value;
+		task_array[count_problem][j+4] = l2.pcommand.value;
+		task_array[count_problem][j+5] = l2.prwel.value;
+		task_array[count_problem][j+6] = l2.pfres.value;
+		task_array[count_problem][j+7] = l2.ptres.value;
+		task_array[count_problem][j+8] = l2.pmscore.value;
+		
+		/*for (var x = 0; x < 9; x++)
+		{
+			if (task_array[count_problem][x] === "")
+				flag ++;
+		}
+
+		if (flag)
+		{
+			alert ("Заполните все поля");
+			return;
+		}*/
+	
+
+		create_row ('table_labs', index_count, task_array[count_problem][0], 1);
+
+		j = 0;
+
+		count_problem++ ;
+		index_count++;
+		
+		l2.reset();
+
+		console.log(count_problem);
+	}
+	
+
+	function create_row (table_labs, index, text, flag)
+	{
+		var table_paste = document.getElementById(table_labs);
+		var tr_new = document.createElement('tr'); 
+		var td_new = document.createElement('td');
+
+		tr_new.id  = index;
+		td_new.id  = "td_labs_" + index;
+	
+		td_new.style.background = "";
+		td_new.innerHTML = text;
+		td_new.align = "center";
+		
+
+		tr_new.onclick =  function ()   	
+		{ 
+			if (flag)
+			{
+				if (this.style.background === "")
+				{
+
+					if (currentRowId != -1)
+					{	
+						console.log(currentRowId);
+						currentRow.style.background = "";
+					}
+					this.style.background = "red";	
+					currentRowId = this.id;
+					currentRow = this;
+					console.log(currentRowId);
+
+					var table_delete = document.getElementById('table_labs');
+
+					for (var x = 0; x < count_problem; x++)
+					{
+						if (table_delete.rows[x].id === this.id)
+						{
+							currentRowIdDelete = x;
+							break;
+						}	
+					}
+				}
+				else
+				{
+					this.style.background = "";
+		    		currentRowId = -1;
+		    	}
+		    }
+		    else
+		    {
+		    	if (this.style.background === "")
+				{
+					if (currentRowId_lab != -1)
+					{	
+						console.log(currentRowId_lab);
+						currentRow_lab.style.background = "";
+					}
+					this.style.background = "red";	
+					currentRowId_lab = this.id;
+					currentRowId_lab++;
+					currentRow_lab = this;
+				}
+				else
+				{
+					this.style.background = "";
+		    		currentRowId_lab = -1;
+		    	}
+		    }
+	    }
+	    
+		tr_new.appendChild(td_new); 
+		table_paste.appendChild(tr_new); 
+	}
+
+	function deleteRow ()
+	{
+
+
+		if (currentRowIdDelete === -1)
+			return;
+
+		var x2 = 0;
+		var table_delete = document.getElementById('table_labs');
+		
+		table_delete.deleteRow(currentRowIdDelete);
+
+		x2 = currentRowIdDelete;
+
+		console.log(x2);
+
+		task_array.splice(x2,1);
+
+		task_array.push([0,0,0,0,0,0,0,0,0,0]);
+
+		count_problem--;
+		currentRowId = -1;
+		currentRowIdDelete = -1;
+
+		console.log(count_problem);
+		console.log(task_array);
+	
+		
+	}
+
+	function sendRowUp(CurRow,PreviousRow,index1,index2)
+  	{
+  		PreviousRow.parentNode.insertBefore(CurRow,PreviousRow);
+  		task_buff = task_array[index1];
+  		task_array[index1] = task_array[index2];
+  		task_array[index2] = task_buff;
+  		console.log(task_array);
+  		return false;
+	}
+  
+
+    function moveRowUp()
+  	{ 	
+
+  		var PreviousRow;
+  		var CurrentRow;
+  		var table_move = document.getElementById('table_labs');
+  	
+    	console.log(currentRowId);
+	    for (var i = 0; i < table_move.rows.length; i++)
+	    {
+	      if (table_move.rows[i].id == currentRowId) 
+	      {
+	        if (i === 0) 
+	        {
+	          CurrentRow = table_move.rows[i];
+	          PreviousRow = table_move.rows[i];
+	          sendRowUp(CurrentRow,PreviousRow,i,i);
+	        }
+	        else 
+	        {
+	          CurrentRow = table_move.rows[i];
+	          PreviousRow = table_move.rows[i - 1];
+	          sendRowUp(CurrentRow,PreviousRow,i,i-1);
+	        }
+	        
+	        break;
+	      }
+	    }
+	  return false;
+  }
+
+  
+
+    function moveRowDown()
+    { 
+  	  var PreviousRow;
+  	  var CurrentRow;
+   	  var table_move=document.getElementById('table_labs');
+   	
+   	  console.log(currentRowId);
+	  for (var i = 0; i < table_move.rows.length; i++)
+	  {
+	    if (table_move.rows[i].id==currentRowId) 
+	    {
+	      if (i === table_move.rows.length-1) 
+	      {
+	        CurrentRow = table_move.rows[i];
+	        PreviousRow = table_move.rows[i];
+	        sendRowUp(CurrentRow,PreviousRow,i,i);
+	      }
+	      else 
+	      {
+	        CurrentRow = table_move.rows[i+1];
+	        PreviousRow = table_move.rows[i];
+	        sendRowUp(CurrentRow,PreviousRow,i,i+1);
+	      }
+	      
+	      break;
+	    }
+	  }
+	  return false;
+	}
+	
+
+	var id_lab = -1; // нужно получить текущий ID из БД
+
+	function request () 
+	{	
+	    var XHR = window.XDomainRequest || window.XMLHttpRequest;
+        var xhr = new XHR();
+        var CI;
+        var key = "";
+
+        console.log(currentRowId_lab);
+        if (currentRowId_lab != -1)
+        	CI = Array_Labs[currentRowId_lab-1]['id_labwork'];   
+
+        console.log(CI);
+
+        if (currentRowId_lab === -1 )
+        	CI = "";
+        
+
+        else 
+        {	
+        	var xhr_del = new XHR();
+        	console.log(CI);
+        	xhr_del.open("GET", host + 'act=deleteLabwork&pidlw='+ CI, false);
+
+        	xhr_del.onload = function() {
+       	     alert (xhr.responseText); 
+	   		}
+
+	        xhr_del.onerror = function() {
+	            alert("Error")
+	        }
+
+	        xhr_del.send() 
+        	
+        }
+
+        if (currentRowId_lab != -1 )
+        	key = Array_Labs[currentRowId_lab-1]['labwork_key'];
+        var params =  
+		"&pname=" + info_lab[0]
+		+ "&pbdate=" + encodeURIComponent(info_lab[1])
+		+ "&pedate=" + encodeURIComponent(info_lab[2])
+		+ "&ptlimit=" + encodeURIComponent(info_lab[4])
+		+ "&pclimit=" + encodeURIComponent(info_lab[3])
+		+ "&pnote=" + encodeURIComponent(info_lab[5])
+		+ "&psystem=" + encodeURIComponent(info_lab[7])
+		+ "&ppcount=" + encodeURIComponent(count_problem)
+		+ "&ppid_lw=" + encodeURIComponent(CI)
+		+ "&pswel=" + encodeURIComponent(info_lab[6])
+		+ "&pavailable=" +  encodeURIComponent(info_lab[9])
+		+ "&pid_subject=" +  encodeURIComponent(info_lab[8])
+		+ "&pkey=" + encodeURIComponent(key)
+		+ "&prift=" + encodeURIComponent(info_lab[10]);
+		console.log(params)
+
+		if (CI === "")
+        	currentRowId_lab = -1;
+
+        xhr.open("GET", host + 'act=createLabwork'+params, false);
+
+        xhr.onload = function() {
+            alert (xhr.responseText); 
+      		var myArr = eval( '(' + xhr.responseText + ')' );
+      		//if (currentRowId_lab === -1)
+	        //{
+	        	id_lab = myArr[0][0];
+	        	
+	        //}
+
+	        //else
+	        	//id_lab = currentRowId_lab;
+	       
+	   		}
+
+        xhr.onerror = function() {
+            alert("Error")
+        }
+
+        xhr.send() 
+
+      	console.log(id_lab); 
+      	console.log(task_array); 
+        var problem_labs = [];
+		
+
+		for (var i = 0; i < count_problem; i++) // вместо i вставить реальное кол-во пунктов
+		{
+			problem_labs[i] = 
+			"&ptask=" + encodeURIComponent(task_array[i][0]) +
+			"&ptres=" + encodeURIComponent(task_array[i][7]) +
+			"&pfres=" + encodeURIComponent(task_array[i][6]) +
+			"&pcommand=" + encodeURIComponent(task_array[i][4]) +
+			"&prwel=" + encodeURIComponent(task_array[i][5]) +
+			"&pclimit=" + encodeURIComponent(task_array[i][1]) +
+			"&pfoul=" + encodeURIComponent(task_array[i][2]) +
+			"&pnote=" + encodeURIComponent(task_array[i][3]) +
+			"&pidlabwork=" + encodeURIComponent(id_lab) +
+	 		"&pind=" + encodeURIComponent(i+1) +
+	 		"&pmscore=" + encodeURIComponent(task_array[i][8]);
+	 	}
+
+	 	for (var x = 0; x < count_problem; x++)
+	 	{
+
+
+        	var xhr_2 = new XHR();
+	 
+			xhr_2.open("GET", host + 'act=createProblem'+problem_labs[x], false);
+
+	        xhr_2.onload = function() {
+	            alert (xhr_2.responseText);
+	        }
+
+	        xhr_2.onerror = function() {
+	            alert("Error")
+	        }
+
+	        xhr_2.send()
+	    }
+
+	    //location.reload();
+	
+	}
+
+	function getSubject()
+	{
+    	var XHR = window.XDomainRequest || window.XMLHttpRequest
+        var xhr = new XHR(); // создание кросс-браузерного запроса
+
+        xhr.open("GET", 'https://193.218.136.175/simmg/analysis.php?act=getSubject', true); //создание запроса
+
+        xhr.onload = function() {
+           
+        var answer = eval( '(' + xhr.responseText + ')' ); //обработка ответа при успешном запросе
+        createOption ("discyplines", answer, 'subject'); //функция создания списка дисциплин
+        }
+
+        xhr.onerror = function() { //обработка ошибок
+            alert("Error")
+        }
+
+        xhr.send()
+    }
+
+    function getSystem()
+	{
+    	var XHR = window.XDomainRequest || window.XMLHttpRequest
+        var xhr = new XHR();
+
+        xhr.open("GET", 'https://193.218.136.175/simmg/create_and_edit_labwork.php?act=getSystem', true);
+
+        xhr.onload = function() {
+           
+        var answer = eval( '(' + xhr.responseText + ')' );      
+     	console.log(answer);
+        createOption ("systems", answer, 'system');
+        }
+
+        xhr.onerror = function() {
+            alert("Error")
+        }
+
+        xhr.send()
+    }
+
+    function createOption (select, list, type)
+    {
+    	console.log(select);
+    	var paste = document.getElementById(select);
+    	for (var i = 0; i < list.length; i++)
+    	{
+
+    		option = document.createElement("option");
+    		option.id = list[i]['id_'+type];
+    		option.appendChild(document.createTextNode(list[i][type+'_name']));
+    		console.log(option, paste);
+    		paste.appendChild(option);
+
+    		console.log(option);
+    	}
+
+    }
+</script>

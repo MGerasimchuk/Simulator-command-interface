@@ -1,0 +1,876 @@
+﻿<!DOCTYPE HTML>
+<html>
+ <meta charset='utf-8' />
+
+<script type="text/javascript">
+	
+	var currentRowId = -1;
+	var OS;
+	var LabLimit;
+	var pid_session;
+	var Labs;
+	var forTimer;
+	var timeLimit;
+	var pr_wel;
+	var pcount;
+	var query = getQueryParams(document.location.search);
+    
+    var host = "https://193.218.136.175/simmg/run_session.php?";
+
+	function getQueryParams(qs) 
+	{
+      qs = qs.split("+").join(" ");
+
+      var params = {}, tokens,
+          re = /[?&]?([^=]+)=([^&]*)/g;
+
+      while (tokens = re.exec(qs)) {
+          params[decodeURIComponent(tokens[1])]
+              = decodeURIComponent(tokens[2]);
+      }
+
+      return params;
+  	}
+
+	CheckOS();
+    
+
+	function CheckOS()																						//Определение ОС.
+	{
+		var XHR = window.XDomainRequest || window.XMLHttpRequest
+        var xhr = new XHR();
+        query = getQueryParams(document.location.search)
+        console.log(query);
+       	xhr.open("GET", host + 'act=getLabworkInfo&lw_key=' + query.lr_key, true);
+
+		xhr.onload = function() {
+		var info = eval( '(' + xhr.responseText + ')' );      
+		console.log(info[0]['system_name']);
+
+		OS = info[0]['system_name'];
+		LabLimit = info[0]['labwork_tlimit'] * 60;
+		pcount = info[0]['labwork_pcount'];
+		pr_wel = info[0]['labwork_swel'];
+		console.log(info, LabLimit);
+		createSession();
+		  
+
+		       
+		 }
+
+		xhr.onerror = function() {
+		    alert("Для отображения содержимого данной страницы, подтвердите сертификат безопасности перейдя по ссылке https://193.218.136.175")
+		}
+
+		xhr.send() 
+				
+	}
+
+	function createSession () //создание сессии
+	{
+
+		
+		var XHR = window.XDomainRequest || window.XMLHttpRequest
+        var xhr = new XHR();
+
+        console.log(query);
+        xhr.open("GET", host + 'act=createSessionByKey&login=' + query.login + '&full_name=' + query.full_name + '&identifier=' + query.identifier + '&lr_key=' + query.lr_key + '&course_name=' + query.course_name + '&group=' + query.group, true);
+
+        xhr.onload = function() {
+        var session = eval( '(' + xhr.responseText + ')' );      
+        pid_session = session[0]['LAST_SES_ID'];
+        getInfoProblem (pid_session);
+        DisplayConsole();	
+      
+       
+        }
+
+        xhr.onerror = function() {
+            alert("Error")
+        }
+
+        xhr.send() 
+	}
+
+	
+
+	function getInfoProblem (pid_session) //получение информации о лабораторной (получает id сесиии)
+	{
+
+		var XHR = window.XDomainRequest || window.XMLHttpRequest
+        var xhr = new XHR();
+
+        xhr.open("GET", host + 'act=getInfoProblem&id_session='+pid_session, true);
+
+        xhr.onload = function() {
+        var InfoProblem = eval( '(' + xhr.responseText + ')' );      
+        changeInfoTable(InfoProblem);
+        }
+
+        xhr.onerror = function() {
+            alert("Error")
+        }
+
+        xhr.send() 
+	}
+
+	var complete = 0;
+
+	function getExecuteResult(pid_session, pcommand, pwel)
+	{
+		if (complete)
+			return;
+
+
+
+		var XHR = window.XDomainRequest || window.XMLHttpRequest
+        var xhr = new XHR();
+
+        var params = "&id_session=" + encodeURIComponent(pid_session)
+        + "&command=" + encodeURIComponent(pcommand)
+        + "&wel=" + encodeURIComponent(pwel);
+
+        xhr.open("GET", host + 'act=getExecuteResult'+params + '&login=' + query.login + '&group=' + query.group + '&identifier=' + query.identifier + '&full_name=' + query.full_name  + '&course_id=' + query.course_id ,  true);
+ 
+
+        xhr.onload = function() {
+        var InfoProblem = eval( '(' + xhr.responseText + ')' );      
+
+        if (InfoProblem[0]['completed'])
+        {	
+        	if (InfoProblem[0]['done'])
+        	{
+        		NewLine(1,'Лабораторная работа сдана, выполнено: '+InfoProblem[0]['percent_mark'] + '%');	
+
+        	}
+        	else
+        	{
+        		NewLine(1,'Лабораторная работа не сдана, выполнено: '+InfoProblem[0]['percent_mark'] + '%');	
+        	}
+        	complete = 1;
+        	window.removeEventListener('keypress', HandleKeypress, true);										
+			window.removeEventListener('keydown', HandleSpecialKeypress, true);
+			clearInterval(intervalID);
+	  		return;
+	  	}
+
+        if (InfoProblem[0]['time_limit'])
+        {
+         	alert ('Время вышло!');
+	  		return;
+        }
+
+        pr_wel = InfoProblem[0]['problem_rwel'];
+
+        if (InfoProblem[0]['attemp_limit'])
+        {
+        	NewLine(1, "Закончились попытки для выполнения данного пункта");
+        	NewLine(1, "Переход к следующему");
+        	NewLine(1, InfoProblem[0]['problem_rwel']);
+        	var td11 = document.getElementById('td1'); 
+	  		td11.innerHTML = 'Текущее задание: ' + InfoProblem[0]['problem_task'];
+	  		td11 = document.getElementById('td2'); 
+	  		td11.innerHTML = 'Примечание: ' + InfoProblem[0]['problem_note'];
+	  		td11 = document.getElementById('td3'); 
+	  		td11.innerHTML = InfoProblem[0]['problem_ind'] + '/' + pcount;
+	  		td11 = document.getElementById('attempt'); 
+	  	    td11.innerHTML = InfoProblem[0]['attempt_count'];
+	  		return;
+        }
+
+        DisableCursor();
+        var out;
+
+        /*if (InfoProblem[0]['is_help'] && OS === "Linux")
+        {
+        	var outString = '';
+        	var outMan = [];
+        	var outMas;
+		    out = InfoProblem[0]['result'].split('\n');
+		    for (var i = 0; i < out.length; i++)
+		    {	
+		    	outMas = out[i].toString().split(' ');   		
+	    		var j = 0;
+		    	while (j < outMas.length)
+		    	{	
+		    		outString = '';
+		    		while (outString.length <= 80)
+		    		{
+		    			outString += outMas[j];
+		    			outString += ' ';
+		    			j++;
+		    			if (j >= outMas.length)
+		    				break;
+		    		}
+		    		outMan.push(outString);
+		    	}
+			} 
+
+			console.log(outMan);
+
+			man(outMan);
+			
+
+        }*/
+
+        if (InfoProblem[0]['result'] === null)
+        {
+        	NewLine(1,pr_wel);
+        }
+        else
+        {	
+        	if (InfoProblem[0]['result'].indexOf('\n') != -1 )
+        	{	
+        		var outString = '';
+        		var outMas;
+		        out = InfoProblem[0]['result'].split('\n');
+		        for (var i = 0; i < out.length; i++)
+		        {	
+		        	outMas = out[i].toString().split(' ');   		
+	    			var j = 0;
+		    		while (j < outMas.length)
+		    		{	
+		    			outString = '';
+		    			while (outString.length <= 80)
+		    			{
+		    				outString += outMas[j];
+		    				outString += ' ';
+		    				j++;
+		    				if (j >= outMas.length)
+		    					break;
+		    			}
+		    			NewLine(1,outString);
+		    		}
+			    }    
+		        NewLine(1,pr_wel);		       
+	    	}
+	    	else
+	    	{	
+	    		var outString = '';
+	    		out = InfoProblem[0]['result'].split(' ');
+	    		var i = 0;
+	    		while (i < out.length)
+	    		{	
+	    			outString = '';
+	    			while (outString.length <= 80)
+	    			{
+	    				outString += out[i];
+	    				outString += ' ';
+	    				i++;
+	    				if (i >= out.length)
+	    					break;
+	    			}
+	    			NewLine(1,outString);	    		
+	    		}
+	    		NewLine(1,pr_wel);
+	    	}
+	       
+	    }
+        
+
+	    var td11 = document.getElementById('td1'); 
+		td11.innerHTML = 'Текущее задание: ' + InfoProblem[0]['problem_task'];
+		td11 = document.getElementById('td2'); 
+		td11.innerHTML = 'Примечание: ' + InfoProblem[0]['problem_note'];
+		td11 = document.getElementById('td3'); 
+		td11.innerHTML =  InfoProblem[0]['problem_ind'] + '/' + pcount;
+		td11 = document.getElementById('attempt'); 
+	  	td11.innerHTML = InfoProblem[0]['attempt_count'];
+
+
+	  	 }
+
+        xhr.onerror = function() {
+            alert("Error")
+        }
+
+        xhr.send() 
+	}
+
+
+	function changeInfoTable (InfoProblem)
+	{
+		console.log(InfoProblem);
+		var td11 = document.getElementById('td1'); 
+		console.log(td11)
+	  	td11.innerHTML = 'Текущее задание: ' + InfoProblem[0]['problem_task'];
+	  	td11 = document.getElementById('td2'); 
+	  	td11.innerHTML = 'Примечание: ' + InfoProblem[0]['problem_note'];
+	  	td11 = document.getElementById('td3'); 
+	  	td11.innerHTML =  InfoProblem[0]['problem_ind'] + '/' + pcount;
+	  	td11 = document.getElementById('attempt'); 
+	  	td11.innerHTML = InfoProblem[0]['session_attempt_count'];
+
+	}
+
+	function TimeLab() 
+	{	
+		var tempTime = LabLimit;
+		if (LabLimit === 0)
+		{
+			document.getElementById("time_lab").innerHTML = "";
+			return;
+		}
+		var hours = Math.floor(tempTime/60/60);
+		tempTime -= hours*60*60;
+		var minutes = Math.floor(tempTime/60);
+		tempTime -= minutes*60;
+		var seconds = tempTime;
+		if (hours < 10) hours = "0" + hours;
+		if (minutes < 10) minutes = "0" + minutes;
+		if (seconds < 10) seconds = "0" + seconds;
+		document.getElementById("time_lab").innerHTML = hours + ":" + minutes + ":" + seconds;
+		LabLimit--;
+
+	}
+	
+</script>
+
+<style type="text/css">  
+
+   	.console{
+   		overflow: auto;
+    	width: 670px; 
+    	height: 300px;
+   	}
+  
+	table {
+		width: 650px;
+	    border:1px solid #d3d3d3;
+	    background:#fefefe;	  
+	    margin-top: 0;
+	    text-align: left; 
+	}
+	 
+	td {
+		font: bold;
+	    border-top:1px solid #e0e0e0; 
+	    text-shadow: 1px 1px 1px #fff;
+	    border-right:1px solid #e0e0e0;
+	}
+
+	td.att {
+		font-size: 150%;
+	}
+	 
+</style>
+
+	<body>
+		<table>
+		    <tr> 
+		      <td id = "td1">Текущее задание</td>
+		      <td id = "td3">Пункты</td>
+		      <td rowspan = "2" class = "att" id = "attempt" align="center"></td>
+		    </tr>
+
+		    <tr>
+		      <td id = "td2">Примечание</td>
+		      <td id = "time_lab"></td>
+		    </tr>
+
+		</table>
+		<p>
+
+		<div class = "console" id = "can">
+		<canvas id="myCanvas" width=650 height=3005 style = "float: left" >
+
+		<script>
+
+			var pr_wel;
+
+			var strs = [];
+			var count_up = 0;
+			var html = document.documentElement;
+			var canvas = document.getElementById('myCanvas');
+			var ctx = canvas.getContext('2d');
+			var fontColor;
+			var backColor;
+			var fontType;
+			var cursorOn = 1, cursX = 10, cursY = 30;																//Начальное состояние курсора
+			
+			var str = "";																							//Переменная, хранящая то, что вводит пользователь.
+			var index = 0;																							//Индекс символа в строке, надо которым находится курсор.
+			var img = new Image();
+			
+
+			function DisplayConsole()																				//Отображает начальный интерфейс консоли.
+			{
+		
+				if (OS === "Windows")
+				{	
+					console.log(OS);
+					fontColor = "#C0C0C0";
+					backColor = "black";
+					fontType = "12px Lucida Console";
+				}
+				else
+				{	
+					console.log(OS);
+					fontColor = "white";
+					backColor = "#300924";
+					fontType = "12px Courier New";
+				}
+				ctx.fillStyle = backColor;
+				ctx.fillRect(0, 0, 650, 3005);
+				canvas.style.overflow = scroll;
+
+				ctx.fillStyle = fontColor;
+				ctx.font = fontType;
+				if (OS === "Windows")
+				{
+					ctx.fillText("Microsoft Windows",10,15);
+					ctx.fillText("(c) Корпорация Майкрософт (Microsoft Corporation), 2014. Все права защищены.",7,30);
+					//NewLine(2, "C:\\>");
+					NewLine(2,pr_wel);
+				}
+				else 
+				{	
+					//NewLine(1, "user@User:~$");
+					WriteText(pr_wel);
+				}
+			}
+
+			function NewLine(n, prwel)																						//Переход на новую строку.
+			{	
+				cursX = 10; cursY += 15 * n;
+				if (cursY >= 3000)
+				{
+					cursY = 3000;					
+					img = ctx.getImageData(0,0,650,3005);
+					ctx.putImageData(img, 0, -15, 0, 0, 650, 3005);
+					ctx.fillStyle = backColor;
+					ctx.fillRect(0, 2986, 650, 3005);
+				}
+
+				ctx.fillStyle = fontColor;
+				WriteText(prwel);				
+			}
+
+			function WriteText(string)																				//Отображение на экране текста.
+			{
+				ctx.fillText(string, cursX, cursY);
+				cursX += string.length * 7;
+				if (cursY > 270) 	
+		        {
+			        var scrolling = document.getElementById('can');
+					scrolling.scrollTop = cursY - 270;
+				}
+			
+			}
+
+			function ChangeCursor()																					//Изменение состояния курсора.																				
+			{
+				if (cursorOn == 1) 
+				{
+					ctx.fillStyle = fontColor;
+					if (OS == "Windows")
+					{
+						ctx.fillRect(cursX, cursY - 1, 7, 3);
+					}
+					else
+					{
+						ctx.fillRect(cursX, cursY - 11, 7, 14);
+						if (str.length == 0 || index == str.length) 
+						{
+							cursorOn = -cursorOn;
+							return;	
+						}
+						ctx.fillStyle = backColor;
+						ctx.fillText(str[index], cursX, cursY);
+					}
+				}
+				else DisableCursor();
+				cursorOn = -cursorOn;
+			}
+
+			function DisableCursor()																				//Гашение курсора.
+			{
+				ctx.fillStyle = backColor;
+				if (OS == "Windows")
+				{
+					ctx.fillRect(cursX, cursY - 1, 7, 3);
+				}
+				else ctx.fillRect(cursX, cursY - 11, 7, 14);
+
+				if (str.length == 0 || index == str.length) return;	
+
+				ctx.fillRect(cursX, cursY - 11, 7, 14);																//Восстановление символа под курсором.
+				ctx.fillStyle = fontColor;
+				ctx.fillText(str[index], cursX, cursY);
+			}
+
+			function HandleKeypress(evt)																			//Обработка нажатия обычной клавиши.
+			{
+				evt = evt || window.event;
+				DisableCursor();
+
+				var str_left = "", str_right = "", symbol;															//Разбиение на подстроки.
+
+				str_left = str.substring(0, index);
+				str_right = str.substring(index, str.length);
+
+				if (evt.keyCode == 37 || evt.keyCode == 39 || evt.keyCode == 8 || evt.keyCode == 38 || evt.keyCode == 40) return true;
+				if (evt.keyCode == 13 )																				//Нажатие Enter.
+				{
+					if (str != "")
+					{
+						//cursX = 10; cursY += 15;
+						str.replace(/\\/g,"\\\\");
+						console.log(pid_session, str, pr_wel);
+
+						strs.push(str);
+						getExecuteResult(pid_session, str, pr_wel);
+					}
+					else
+						NewLine(1,pr_wel);
+
+					ctx.fillStyle = backColor;
+					index = 0; 
+					count_up = 0;
+					str = ""; 
+					/*if (cursY > 270) 															//Вертикальный перебор.
+					{
+						var scrolling = document.getElementById('can');
+						scrolling.scrollTop += 15;				
+					}*/
+					return;
+				}
+
+				symbol = String.fromCharCode(evt.charCode || evt.keyCode)
+
+				str = str_left + symbol + str_right;
+
+				ctx.fillStyle = backColor;																			//Замена текущего символа на введенный.
+				ctx.fillRect(cursX, cursY - 11, 8, 14);
+				ctx.fillStyle = fontColor;
+				ctx.fillText(symbol, cursX, cursY);
+
+				cursX += 7;
+				index ++;
+
+				var tempCursX, index_str_right;
+				var tempCursY = cursY - 11;
+
+				ctx.fillStyle = backColor;
+				if (str_right.length != 0)																			
+				{
+					for (tempCursX = cursX, index_str_right =0; index_str_right < str_right.length; tempCursX += 7, index_str_right ++)
+					{																								//Удаление с экрана устаревшей строки.
+						if (tempCursX > 630)																		//Выход за край.
+						{
+							tempCursX = 10; 
+							tempCursY += 15;
+						}
+						ctx.fillStyle = backColor;
+						ctx.fillRect(tempCursX, tempCursY, 8, 14);
+					}
+				}
+	
+				var tempCursY = cursY;
+				ctx.fillStyle = fontColor;
+				if (str_right.length != 0)
+				{
+					for (tempCursX = cursX, index_str_right = 0; index_str_right < str_right.length; tempCursX += 7, index_str_right ++ )
+					{																								//Добавление обновленной строки.
+						if (tempCursX > 630)																		//Выход за край.
+						{
+							tempCursX = 10; 
+							tempCursY += 15;
+						}
+						ctx.fillStyle = fontColor;
+						ctx.fillText(str_right[index_str_right],tempCursX,tempCursY);
+					}
+				}
+				if (cursX > 630) 																					//Выход реального курсора за край.
+				{
+					cursX = 10; cursY += 15; 
+					return;
+				}
+			}
+
+			function HandleBackspace()																				//Обработка нажатия Backspace.
+			{
+				DisableCursor();
+				
+				var str_left = "", str_right = "", symbol;
+				str_left = str.substring(0, index - 1);																//Разбиение на подстроки и получение новой строки.
+				str_right = str.substring(index, str.length);
+				symbol = str[index - 1];
+				str = str_left + str_right;
+
+				if (cursX <= 10) 																					//Выход реального курсора за левый край.
+				{
+					cursX = 626; cursY -= 15; 
+					ctx.fillStyle = backColor;
+			 		ctx.fillRect(cursX, cursY - 11, 8, 14); 
+			 		index--; 
+			 		return;
+			 	}
+				
+				cursX -= 7;
+			 	index --;
+
+			 	var tempCursX, index_str_right;
+			 	var tempCursY = cursY - 11;
+			 	
+			 	for (tempCursX = cursX, index_str_right = 0; index_str_right < str_right.length + 1; tempCursX += 7, index_str_right ++)
+			 	{																									//Удаление с экрана устаревшей строки.
+			 		if (tempCursX > 630)
+			 		{
+			 			tempCursX = 10; 
+			 			tempCursY += 15;
+			 		}
+			 		ctx.fillStyle = backColor;
+			 		ctx.fillRect(tempCursX, tempCursY, 8, 14);
+			 	}
+
+			 	var tempCursY = cursY;
+			 	ctx.fillStyle = fontColor;
+			 	for (tempCursX = cursX, index_str_right = 0; index_str_right < str_right.length; tempCursX += 7, index_str_right ++)
+			 	{																									//Отображение новой строки.
+			 		if (tempCursX > 630)
+			 		{
+			 			tempCursX = 10; 
+			 			tempCursY += 15;
+			 		}
+			 		ctx.fillStyle = fontColor;
+			 		ctx.fillText(str_right[index_str_right], tempCursX, tempCursY);
+			 	}
+			}
+
+			function HandleForwardArrow()																			//Обработка стрелки вперед.
+			{
+				if (cursX >= 626) 
+				{
+					cursX = 10; 
+					cursY += 15
+				}  
+				else cursX += 7; 
+				index ++;
+			}
+
+			function HandleBackArrow()																				//Обработка стрелки назад.
+			{
+				if (cursX <=10) 
+				{
+					cursX = 626; 
+					cursY-=15
+				}  
+				else cursX-=7; 
+				index--;
+			}
+
+			function HandleUpArrow ()
+			{	
+				if (strs.length - 1 - count_up === -1)
+					return;			
+
+				if (str != "")
+				{
+					var cursXOld = cursX;
+					cursX = 10;
+					cursXOld = cursXOld - cursX;
+					console.log(cursXOld);
+					ctx.fillStyle = backColor;																	
+					ctx.fillRect(cursX, cursY - 11, cursXOld, 14);
+					ctx.fillStyle = fontColor;
+					WriteText(pr_wel);
+				}
+
+				var i = 0, j = 0; 
+
+				console.log(strs);
+
+				var new_string = strs[strs.length - 1 - count_up];
+
+				console.log(new_string);
+
+				ctx.fillStyle = fontColor;
+				ctx.fillText(new_string, cursX, cursY);
+				cursX += new_string.length * 7;
+
+				count_up++;
+
+				str = new_string;
+				index = new_string.length;
+
+			}
+
+			function HandleDownArrow ()
+			{	
+				if (count_up <= 1)
+					return;			
+
+				if (str != "")
+				{
+					var cursXOld = cursX;
+					cursX = 10;
+					cursXOld = cursXOld - cursX;
+					console.log(cursXOld);
+					ctx.fillStyle = backColor;																	
+					ctx.fillRect(cursX, cursY - 11, cursXOld, 14);
+					ctx.fillStyle = fontColor;
+					WriteText(pr_wel);
+				}
+
+				var i = 0, j = 0; 
+
+				console.log(strs);
+
+				var new_string = strs[strs.length + 1 - count_up];
+
+				console.log(new_string);
+
+				ctx.fillStyle = fontColor;
+				ctx.fillText(new_string, cursX, cursY);
+				cursX += new_string.length * 7;
+
+				count_up--;
+
+				str = new_string;
+				index = new_string.length;
+
+			}
+
+			function HandleSpecialKeypress(evt)																		//Обработка специальных клавиш.
+			{
+				evt = evt || window.event;
+				if (evt.keyCode == 39)																				//Стрелка вперед.
+				{
+					DisableCursor();
+					if (index != str.length)
+					{
+						HandleForwardArrow(); 
+						ChangeCursor();
+					} 
+					return;
+				}			
+				if (evt.keyCode == 37)																				//Стрелка назад.
+				{
+					DisableCursor();
+					if (index) 																						//Не начало строки.
+					{  
+						HandleBackArrow();
+						ChangeCursor();
+					} 
+					return;
+				}							
+				if (evt.keyCode == 8)																				//Backspace.
+				{
+					DisableCursor(); 
+					if (index) 
+					{
+						HandleBackspace(); 
+						ChangeCursor();
+					} 
+					return;
+				}	
+
+				if (evt.keyCode == 38)
+				{
+					DisableCursor();
+					HandleUpArrow();
+					ChangeCursor();
+					return;
+				}		
+
+				if (evt.keyCode == 40)
+				{
+					DisableCursor();
+					HandleDownArrow();
+					ChangeCursor();
+					return;
+				}					
+			}
+
+			function DisableHotKey()																				//Перехват горячей клавиши.
+			{
+				document.onkeydown = function(evt)
+				{
+
+					evt = evt || window.event;
+					var mCode = evt.charCode || evt.keyCode;
+
+					if (mCode === 8)
+						{
+							return mCode != 8 || false;
+						}
+
+					if (mCode === 38)
+						{
+							return mCode != 38 || false;
+						}
+
+					if (mCode === 40)
+						{
+							return mCode != 40 || false;
+						}
+
+					if (mCode === 32)
+						{	
+							if(evt.preventDefault) evt.preventDefault();
+							HandleKeypress(evt);
+							return mCode != 32;
+						}
+
+					if (navigator.userAgent.search(/Firefox/) != -1)
+					{
+						if (mCode === 191)
+							{	
+								if(evt.shiftKey)
+								{
+									var keyboardEvent = document.createEvent("KeyboardEvent");
+									var initMethod = typeof keyboardEvent.initKeyboardEvent !== 'undefined' ? "initKeyboardEvent" : "initKeyEvent";
+									keyboardEvent[initMethod]("keypress", true, true, window, false, false, false, false, 0, 63);
+									HandleKeypress(keyboardEvent);
+									return mCode != 191;
+								}
+								else
+								{
+									var keyboardEvent = document.createEvent("KeyboardEvent");
+									var initMethod = typeof keyboardEvent.initKeyboardEvent !== 'undefined' ? "initKeyboardEvent" : "initKeyEvent";
+									keyboardEvent[initMethod]("keypress", true, true, window, false, false, false, false, 0, 47);
+									HandleKeypress(keyboardEvent);
+									return mCode != 191;
+								}
+							}
+
+						if (mCode === 222)
+							{	
+								if(evt.shiftKey)
+								{
+									var keyboardEvent = document.createEvent("KeyboardEvent");
+									var initMethod = typeof keyboardEvent.initKeyboardEvent !== 'undefined' ? "initKeyboardEvent" : "initKeyEvent";
+									keyboardEvent[initMethod]("keypress", true, true, window, false, false, false, false, 0, 34);
+									HandleKeypress(keyboardEvent);
+									return mCode != 222;
+								}
+								else
+								{
+									var keyboardEvent = document.createEvent("KeyboardEvent");
+									var initMethod = typeof keyboardEvent.initKeyboardEvent !== 'undefined' ? "initKeyboardEvent" : "initKeyEvent";
+									keyboardEvent[initMethod]("keypress", true, true, window, false, false, false, false, 0, 39);
+									HandleKeypress(keyboardEvent);
+									return mCode != 222;
+								}
+							}
+					}
+				}	
+			}
+
+
+			DisableHotKey();
+
+			window.addEventListener('keypress', HandleKeypress, true);										
+			window.addEventListener('keydown', HandleSpecialKeypress, true);
+
+			setInterval('ChangeCursor()', 500);	
+			var intervalID;
+			intervalID = setInterval('TimeLab()', 1000);	
+
+			</script>
+		</canvas>
+		</div>
+		
+ 	</body>
+</html>
